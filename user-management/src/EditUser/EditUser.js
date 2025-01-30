@@ -1,16 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import './EditUser.css';
 
-const EditUser = ({ userId, onClose, onUpdateUser }) => {
-    const [user, setUser] = useState(null);
+const EditUser = ({ onClose, onUpdateUser, selectedUserDetails }) => {
+    const [user, setUser] = useState(selectedUserDetails);
     const [errors, setErrors] = useState({}); // State to track errors
-
-    useEffect(() => {
-        fetch(`https://jsonplaceholder.typicode.com/users/${userId}`)
-            .then((response) => response.json())
-            .then((data) => setUser(data))
-            .catch((error) => console.error("Error fetching user:", error));
-    }, [userId]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -62,6 +55,7 @@ const EditUser = ({ userId, onClose, onUpdateUser }) => {
             .then((response) => response.json())
             .then((updatedUser) => {
                 onUpdateUser(updatedUser); // Update the user in ViewUsers.js
+                setUser(null)
                 onClose(); // Close the edit form
             })
             .catch((error) => console.error("Error saving user:", error));
