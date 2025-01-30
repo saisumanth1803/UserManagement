@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import './ViewUsers.css';
 import EditUser from "../EditUser/EditUser";
 
-const ViewUsers = () => {
+function ViewUsers() {
     const [users, setUsers] = useState([]);
     const [selectedUserDetails, setSelectedUserDetails] = useState(null)
 

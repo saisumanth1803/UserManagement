@@ -47,6 +47,7 @@ function AddUser() {
     })
       .then((response) => response.json())
       .then(() => setUsers((prevUsers) => [...prevUsers, ...users, { ...form }]))
+      .then(() => alert("success"))
       .catch((error) => console.error("Error adding user:", error));
 
     // Clear form after submission

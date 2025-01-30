@@ -1,7 +1,7 @@
 import { useState } from "react";
 import './EditUser.css';
 
-const EditUser = ({ onClose, onUpdateUser, selectedUserDetails }) => {
+function EditUser ({ onClose, onUpdateUser, selectedUserDetails }) {
     const [user, setUser] = useState(selectedUserDetails);
     const [errors, setErrors] = useState({}); // State to track errors
 
