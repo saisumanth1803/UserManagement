@@ -27,10 +27,18 @@ const ViewUsers = () => {
         setSelectedUserId(null); // Close the EditUser form
     };
 
+    const handleUpdateUser = (updatedUser) => {
+        setUsers((prevUsers) =>
+            prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+        );
+        setSelectedUserId(null); // Close the EditUser form after saving
+    };
+    
+
     return (
         <div className="table-container">
             {selectedUserId ? (
-                <EditUser userId={selectedUserId} onClose={handleCloseEdit} />
+                <EditUser userId={selectedUserId} onClose={handleCloseEdit} onUpdateUser={handleUpdateUser} />
             ) : (
                 <table>
                     <thead>
@@ -69,6 +77,7 @@ const ViewUsers = () => {
                         ))}
                     </tbody>
                 </table>
+                
             )}
         </div>
     );

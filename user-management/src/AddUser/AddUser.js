@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import './AddUser.css';
 
 function AddUser() {
@@ -17,43 +17,41 @@ function AddUser() {
     department: ""
   });
 
-  const handleChange = (e) => {
+  // Memoized handler to avoid unnecessary re-renders
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
 
-    // Update form state
-    setForm({ ...form, [name]: value });
+    setForm((prevForm) => ({ ...prevForm, [name]: value }));
 
-    // Validate name fields (firstName and lastName)
-    if ((name === "firstName" || name === "lastName") && !/^[A-Za-z\s]+$/.test(value)) {
-      setErrors((prevErrors) => ({ ...prevErrors, [name]: "Name is Invalid" }));
-    } else {
-      setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-    }
+    setErrors((prevErrors) => {
+      let errorMessage = "";
 
-    // Validate email field
-    if (name === "email") {
-      const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-      if (value.match(validRegex)) {
-        setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-      } else {
-        setErrors((prevErrors) => ({ ...prevErrors, [name]: "Email is Invalid" }));
+      if ((name === "firstName" || name === "lastName") && !/^[A-Za-z\s]+$/.test(value)) {
+        errorMessage = "Name is Invalid";
+      } else if (name === "email") {
+        const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        if (!validRegex.test(value)) {
+          errorMessage = "Email is Invalid";
+        }
       }
-    }
-  };
 
-  const handleAddUser = () => {
+      return { ...prevErrors, [name]: errorMessage };
+    });
+  }, []);
+
+  const handleAddUser = useCallback(() => {
     fetch("https://jsonplaceholder.typicode.com/users", {
       method: "POST",
       body: JSON.stringify(form),
       headers: { "Content-Type": "application/json" },
     })
       .then((response) => response.json())
-      .then((data) => setUsers([...users, { ...form }]))
+      .then(() => setUsers((prevUsers) => [...prevUsers, ...users, { ...form }]))
       .catch((error) => console.error("Error adding user:", error));
 
     // Clear form after submission
     setForm({ firstName: "", lastName: "", email: "", department: "" });
-  };
+  }, [form, users]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

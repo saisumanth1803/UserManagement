@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import './EditUser.css';
 
-const EditUser = ({ userId, onClose }) => {
+const EditUser = ({ userId, onClose, onUpdateUser }) => {
     const [user, setUser] = useState(null);
     const [errors, setErrors] = useState({}); // State to track errors
 
@@ -54,18 +54,17 @@ const EditUser = ({ userId, onClose }) => {
     };
 
     const handleSave = () => {
-        console.log('logggggg user', user, errors)
         fetch(`https://jsonplaceholder.typicode.com/users/${user.id}`, {
             method: "PUT",
             body: JSON.stringify(user),
             headers: { "Content-Type": "application/json" },
         })
             .then((response) => response.json())
-            .then(() => {
-                onClose(); // Close the form after saving
+            .then((updatedUser) => {
+                onUpdateUser(updatedUser); // Update the user in ViewUsers.js
+                onClose(); // Close the edit form
             })
             .catch((error) => console.error("Error saving user:", error));
-        onClose(); // Close the form after saving
     };
 
     if (!user) {
